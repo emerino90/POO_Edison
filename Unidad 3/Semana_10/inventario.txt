@@ -1,1 +1,10 @@
-
+{
+    "Panes": {
+        "cantidad": 150,
+        "precio": 0.15
+    },
+    "Chocolates": {
+        "cantidad": 20,
+        "precio": 0.5
+    }
+}
