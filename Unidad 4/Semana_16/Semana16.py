@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import font
 
 class TaskManagerApp:
     def __init__(self, master):
@@ -21,6 +22,11 @@ class TaskManagerApp:
         self.task_listbox = tk.Listbox(master, width=50, height=15)
         self.task_listbox.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
 
+        # Fuente para tareas completadas
+        self.normal_font = font.Font(self.task_listbox, self.task_listbox.cget("font"))
+        self.completed_font = self.normal_font.copy()
+        self.completed_font.configure(slant="italic", overstrike=1)
+
         # Botones
         self.btn_complete = tk.Button(master, text="Completar", width=15, command=self.complete_task)
         self.btn_complete.grid(row=2, column=0, padx=10, pady=5, sticky="w")
@@ -39,18 +45,23 @@ class TaskManagerApp:
         task = self.task_var.get().strip()
         if task:
             self.task_listbox.insert(tk.END, task)
+            index = self.task_listbox.size() - 1
+            self.task_listbox.itemconfig(index, fg="black", font=self.normal_font)
             self.task_var.set("")
 
     def complete_task(self, event=None):
         try:
             index = self.task_listbox.curselection()[0]
-            text = self.task_listbox.get(index)
-            if "[✔]" not in text:
-                self.task_listbox.delete(index)
-                self.task_listbox.insert(index, f"[✔] {text}")
+            current_text = self.task_listbox.get(index)
+            # Verificamos si ya está completada (fuente tachada)
+            current_font = self.task_listbox.itemcget(index, "font")
+
+            if current_font == str(self.normal_font):
+                # Marcar como completada
+                self.task_listbox.itemconfig(index, fg="gray", font=self.completed_font)
             else:
-                self.task_listbox.delete(index)
-                self.task_listbox.insert(index, text.replace("[✔] ", ""))
+                # Desmarcar
+                self.task_listbox.itemconfig(index, fg="black", font=self.normal_font)
         except IndexError:
             pass
 
